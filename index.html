@@ -1,0 +1,657 @@
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=IBM+Plex+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#0d0d0f;--surface:#141418;--surface2:#1c1c22;
+  --indigo:#6c5ce7;--rose:#e84393;
+  --indigo-soft:rgba(108,92,231,0.15);--rose-soft:rgba(232,67,147,0.12);
+  --text:#f0eef8;--muted:#888;--border:rgba(255,255,255,0.07);
+}
+#port{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;overflow-x:hidden;position:relative;}
+.mono{font-family:'IBM Plex Mono',monospace;}
+.serif{font-family:'Playfair Display',serif;}
+
+/* CURSOR TRAIL */
+.cursor-dot{
+  position:absolute;width:10px;height:10px;border-radius:50%;
+  background:var(--indigo);pointer-events:none;z-index:9999;
+  transform:translate(-50%,-50%);transition:transform .1s;
+  opacity:0.7;
+}
+.cursor-ring{
+  position:absolute;width:28px;height:28px;border-radius:50%;
+  border:1.5px solid var(--rose);pointer-events:none;z-index:9998;
+  transform:translate(-50%,-50%);opacity:0.4;
+}
+
+/* NAV */
+nav{
+  position:sticky;top:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:.9rem 2rem;
+  background:rgba(13,13,15,0.9);
+  backdrop-filter:blur(12px);
+  border-bottom:.5px solid var(--border);
+}
+.nav-logo{font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--indigo);}
+.nav-links{display:flex;align-items:center;gap:2rem;}
+.nav-links a{font-size:13px;color:var(--muted);text-decoration:none;cursor:pointer;transition:color .2s;}
+.nav-links a:hover{color:var(--text);}
+.open-badge{
+  display:flex;align-items:center;gap:6px;
+  background:rgba(29,158,117,0.15);border:1px solid rgba(29,158,117,0.4);
+  border-radius:20px;padding:4px 12px;
+  font-family:'IBM Plex Mono',monospace;font-size:11px;color:#1d9e75;
+  animation:pulse-badge 2.5s ease-in-out infinite;
+}
+.open-dot{width:7px;height:7px;border-radius:50%;background:#1d9e75;animation:blink-dot 1.2s step-end infinite;}
+@keyframes blink-dot{0%,100%{opacity:1;}50%{opacity:0;}}
+@keyframes pulse-badge{0%,100%{box-shadow:0 0 0 0 rgba(29,158,117,0.3);}50%{box-shadow:0 0 0 6px rgba(29,158,117,0);}}
+
+/* HERO */
+.hero{min-height:520px;display:grid;grid-template-columns:1fr 1fr;position:relative;overflow:hidden;}
+.hero-left{padding:4rem 2rem;display:flex;flex-direction:column;justify-content:center;position:relative;z-index:2;}
+.hero-right{position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;}
+.wireframe-grid{position:absolute;inset:0;opacity:0.1;background-image:linear-gradient(var(--indigo) 1px,transparent 1px),linear-gradient(90deg,var(--indigo) 1px,transparent 1px);background-size:36px 36px;}
+
+/* AVATAR */
+.avatar-wrap{position:relative;z-index:2;}
+.avatar-ring{
+  width:200px;height:200px;border-radius:50%;
+  border:2px solid var(--indigo);
+  display:flex;align-items:center;justify-content:center;
+  animation:float 5s ease-in-out infinite;
+  position:relative;
+}
+.avatar-inner{
+  width:180px;height:180px;border-radius:50%;
+  background:linear-gradient(135deg,#1a0a2e,#2d1b69);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Playfair Display',serif;font-size:52px;font-weight:900;
+  color:var(--indigo);letter-spacing:-2px;
+  border:1px solid rgba(108,92,231,0.3);
+}
+.avatar-ring::before{
+  content:'';position:absolute;inset:-8px;border-radius:50%;
+  border:1px dashed rgba(232,67,147,0.3);
+  animation:spin 20s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg);}}
+@keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);}}
+
+.nng-badge{
+  position:absolute;top:1.5rem;right:1.5rem;z-index:3;
+  width:72px;height:72px;border-radius:50%;
+  background:var(--surface2);border:1.5px solid var(--indigo);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  animation:float 4s ease-in-out infinite;cursor:default;
+}
+.nng-badge .bl{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--indigo);text-align:center;line-height:1.3;}
+.nng-badge .bs{font-size:9px;color:var(--rose);}
+
+.tagline{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--indigo);margin-bottom:.8rem;letter-spacing:.15em;}
+.hero-name{font-family:'Playfair Display',serif;font-size:clamp(2rem,3.5vw,3rem);font-weight:900;line-height:1.1;margin-bottom:.75rem;}
+.hero-name span{color:var(--rose);}
+.typewriter{font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--indigo);margin-bottom:1.5rem;min-height:1.4em;}
+.typewriter::after{content:'|';animation:blink .7s step-end infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0;}}
+.hero-desc{font-size:14px;color:var(--muted);line-height:1.7;max-width:380px;margin-bottom:2rem;}
+.hero-ctas{display:flex;gap:1rem;flex-wrap:wrap;}
+.btn-primary{padding:.6rem 1.4rem;border-radius:6px;background:var(--indigo);color:#fff;font-size:13px;font-family:'IBM Plex Mono',monospace;border:none;cursor:pointer;transition:opacity .2s,transform .15s;}
+.btn-primary:hover{opacity:.85;transform:translateY(-1px);}
+.btn-ghost{padding:.6rem 1.4rem;border-radius:6px;background:transparent;color:var(--rose);font-size:13px;font-family:'IBM Plex Mono',monospace;border:1px solid var(--rose);cursor:pointer;transition:background .2s;}
+.btn-ghost:hover{background:var(--rose-soft);}
+
+/* SECTIONS */
+section{padding:4rem 2rem;}
+.section-label{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.2em;color:var(--rose);text-transform:uppercase;margin-bottom:.5rem;}
+.section-title{font-family:'Playfair Display',serif;font-size:clamp(1.6rem,3vw,2.2rem);font-weight:700;margin-bottom:2rem;}
+.divider{height:.5px;background:var(--border);margin:0 2rem;}
+
+/* PROJECTS */
+.projects-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.5rem;}
+.project-card{background:var(--surface);border:.5px solid var(--border);border-radius:14px;overflow:hidden;cursor:pointer;transition:transform .25s,border-color .25s;position:relative;}
+.project-card:hover{transform:translateY(-6px);border-color:var(--indigo);}
+.project-card.featured{border-color:rgba(108,92,231,.3);}
+
+/* PHONE MOCKUP inside card */
+.phone-wrap{height:160px;background:#0a0a0e;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
+.phone-frame{width:72px;height:130px;border-radius:14px;border:2px solid rgba(108,92,231,0.5);background:#111;position:relative;overflow:hidden;flex-shrink:0;}
+.phone-notch{width:28px;height:5px;background:#222;border-radius:0 0 6px 6px;position:absolute;top:0;left:50%;transform:translateX(-50%);}
+.phone-screen{width:100%;height:100%;display:flex;flex-direction:column;overflow:hidden;}
+.screen-strip{width:100%;flex-shrink:0;transition:transform .4s ease;}
+
+/* SOUL SUPPORT phone screens */
+.ss-s1{height:130px;background:linear-gradient(180deg,#1a0a2e 0%,#2d1b69 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;}
+.ss-s2{height:130px;background:#0f0a1e;display:flex;flex-direction:column;padding:8px;}
+.ss-s3{height:130px;background:#0a0a1a;display:flex;flex-direction:column;align-items:center;padding:8px;}
+
+/* U MOVE phone screens */
+.um-s1{height:130px;background:#0a1628;display:flex;flex-direction:column;padding:8px;}
+.um-s2{height:130px;background:#0d1f3a;display:flex;flex-direction:column;padding:8px;}
+
+/* Silent Me screens */
+.sm-s1{height:130px;background:#051414;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;}
+.sm-s2{height:130px;background:#071a1a;display:flex;flex-direction:column;padding:8px;}
+
+.phone-dots{display:flex;gap:4px;position:absolute;bottom:8px;left:50%;transform:translateX(-50%);}
+.phone-dot{width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,0.2);}
+.phone-dot.active{background:var(--indigo);}
+
+.award-chip{position:absolute;top:.75rem;right:.75rem;background:linear-gradient(135deg,#f5c518,#e8a000);color:#1a1000;font-size:10px;font-weight:600;padding:3px 8px;border-radius:20px;font-family:'IBM Plex Mono',monospace;}
+
+.card-body{padding:1.25rem;}
+.card-role{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);margin-bottom:.3rem;}
+.card-title{font-size:15px;font-weight:500;margin-bottom:.3rem;}
+.card-problem{font-size:11px;font-family:'IBM Plex Mono',monospace;color:var(--rose);margin-bottom:.5rem;line-height:1.5;}
+.card-desc{font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:.75rem;}
+
+/* PROCESS STEPS */
+.process-steps{display:flex;gap:4px;margin-bottom:.75rem;align-items:center;}
+.pstep{display:flex;align-items:center;gap:4px;}
+.pstep-dot{width:18px;height:18px;border-radius:50%;border:1px solid var(--indigo);display:flex;align-items:center;justify-content:center;font-size:8px;color:var(--indigo);font-family:'IBM Plex Mono',monospace;flex-shrink:0;}
+.pstep-label{font-size:9px;font-family:'IBM Plex Mono',monospace;color:var(--muted);}
+.pstep-arrow{font-size:9px;color:var(--border);}
+
+/* BEFORE/AFTER TOGGLE */
+.ba-toggle{display:flex;gap:4px;margin-bottom:.75rem;}
+.ba-btn{font-size:10px;font-family:'IBM Plex Mono',monospace;padding:3px 10px;border-radius:4px;border:.5px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;transition:all .2s;}
+.ba-btn.active{background:var(--indigo-soft);color:var(--indigo);border-color:var(--indigo);}
+.ba-preview{height:50px;border-radius:6px;overflow:hidden;margin-bottom:.75rem;position:relative;}
+.ba-wireframe{position:absolute;inset:0;display:flex;flex-direction:column;gap:3px;padding:6px;background:#0a0a12;}
+.wf-line{background:rgba(108,92,231,0.25);border-radius:2px;height:6px;}
+.wf-box{background:rgba(108,92,231,0.15);border:1px solid rgba(108,92,231,0.3);border-radius:3px;}
+.ba-hifi{position:absolute;inset:0;opacity:0;transition:opacity .3s;}
+
+.card-tags{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:.75rem;}
+.tag{font-size:10px;font-family:'IBM Plex Mono',monospace;padding:2px 8px;border-radius:4px;background:var(--indigo-soft);color:var(--indigo);}
+.tag.rose{background:var(--rose-soft);color:var(--rose);}
+.card-links{display:flex;gap:.75rem;}
+.card-link{font-size:11px;font-family:'IBM Plex Mono',monospace;color:var(--muted);text-decoration:none;border:.5px solid var(--border);padding:3px 10px;border-radius:4px;transition:color .2s,border-color .2s;}
+.card-link:hover{color:var(--indigo);border-color:var(--indigo);}
+
+/* SKILLS */
+.skills-bento{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;}
+.skill-cell{background:var(--surface);border:.5px solid var(--border);border-radius:12px;padding:1.25rem;transition:border-color .2s;position:relative;}
+.skill-cell:hover{border-color:var(--indigo);}
+.skill-cell.wide{grid-column:span 2;}
+.skill-cell-icon{font-size:18px;margin-bottom:.6rem;}
+.skill-cell-title{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--rose);margin-bottom:.75rem;letter-spacing:.1em;}
+.skill-pills{display:flex;flex-wrap:wrap;gap:.4rem;}
+.skill-pill{
+  font-size:11px;font-family:'IBM Plex Mono',monospace;
+  padding:4px 10px;border-radius:20px;
+  background:var(--surface2);color:var(--muted);
+  border:.5px solid var(--border);
+  transition:background .2s,color .2s,border-color .2s;
+  cursor:default;position:relative;
+}
+.skill-pill:hover{background:var(--indigo-soft);color:var(--indigo);border-color:var(--indigo);}
+.skill-tip{
+  position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);
+  background:#1a1a2e;border:.5px solid var(--indigo);
+  border-radius:6px;padding:5px 10px;
+  font-size:10px;color:var(--text);white-space:nowrap;
+  pointer-events:none;opacity:0;transition:opacity .2s;z-index:50;
+}
+.skill-tip::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:4px solid transparent;border-top-color:var(--indigo);}
+.skill-pill:hover .skill-tip{opacity:1;}
+
+/* TIMELINE */
+.timeline{position:relative;padding-left:2rem;}
+.timeline::before{content:'';position:absolute;left:0;top:8px;bottom:8px;width:1px;background:linear-gradient(to bottom,var(--indigo),var(--rose));}
+.tl-item{position:relative;margin-bottom:2.5rem;}
+.tl-dot{position:absolute;left:-2.4rem;top:4px;width:10px;height:10px;border-radius:50%;background:var(--indigo);border:2px solid var(--bg);}
+.tl-dot.rose{background:var(--rose);}
+.tl-date{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);margin-bottom:.3rem;}
+.tl-role{font-size:15px;font-weight:500;margin-bottom:.2rem;}
+.tl-org{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--indigo);margin-bottom:.5rem;}
+.tl-desc{font-size:13px;color:var(--muted);line-height:1.6;}
+
+/* CERTS */
+.certs-row{display:flex;gap:1rem;flex-wrap:wrap;}
+.cert-card{flex:1;min-width:160px;background:var(--surface);border:.5px solid var(--border);border-radius:10px;padding:1rem;transition:border-color .2s;}
+.cert-card:hover{border-color:var(--rose);}
+.cert-icon{font-size:18px;margin-bottom:.5rem;}
+.cert-name{font-size:13px;font-weight:500;margin-bottom:.25rem;}
+.cert-issuer{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);}
+
+/* CONTACT */
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;}
+.contact-item{background:var(--surface);border:.5px solid var(--border);border-radius:10px;padding:1.25rem;display:flex;align-items:center;gap:1rem;transition:border-color .2s;}
+.contact-item:hover{border-color:var(--indigo);}
+.contact-icon{width:36px;height:36px;border-radius:8px;background:var(--indigo-soft);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.contact-label{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);}
+.contact-value{font-size:13px;color:var(--text);}
+
+footer{padding:2rem;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);}
+footer span{color:var(--rose);}
+
+.fade-in{opacity:0;transform:translateY(20px);transition:opacity .6s ease,transform .6s ease;}
+.fade-in.visible{opacity:1;transform:none;}
+</style>
+
+<div id="port">
+  <div class="cursor-dot" id="cdot"></div>
+  <div class="cursor-ring" id="cring"></div>
+
+  <nav>
+    <div class="nav-logo">./abrar.ayman</div>
+    <div class="nav-links">
+      <a onclick="goTo('projects')">work</a>
+      <a onclick="goTo('skills')">skills</a>
+      <a onclick="goTo('experience')">journey</a>
+      <a onclick="goTo('contact')">contact</a>
+      <div class="open-badge"><div class="open-dot"></div>open to work</div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-left">
+      <div class="tagline">// UI/UX Designer & Flutter Developer</div>
+      <h1 class="hero-name">Engineering <br><span>Empathy</span><br>Through Design.</h1>
+      <div class="typewriter" id="tw"></div>
+      <p class="hero-desc">UI/UX Designer & Flutter Developer focused on building human-centered digital experiences.
+I combine user research, interaction design, and development to create products that are both functional and emotionally engaging.</p>
+      <div class="hero-ctas">
+        <button class="btn-primary" onclick="goTo('projects')">view my work</button>
+        <button class="btn-ghost" onclick="goTo('contact')">get in touch</button>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="wireframe-grid"></div>
+      <div class="avatar-wrap">
+        <div class="avatar-ring">
+          <div class="avatar-inner">AA</div>
+        </div>
+      </div>
+      <div class="nng-badge">
+        <div class="bs">★★★★★</div>
+        <div class="bl">NN/g UX<br>Master<br>Certified</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- PROJECTS -->
+  <section id="projects">
+    <div class="section-label">// 01. selected work</div>
+    <h2 class="section-title">Projects</h2>
+    <div class="projects-grid">
+
+      <!-- SOUL SUPPORT -->
+      <div class="project-card featured fade-in">
+        <div class="phone-wrap">
+          <div class="phone-frame" id="ss-phone">
+            <div class="phone-notch"></div>
+            <div class="phone-screen" id="ss-screen">
+              <div class="screen-strip">
+                <div class="ss-s1">
+                  <svg width="32" height="32" viewBox="0 0 32 32"><path d="M16 28s-12-7.2-12-15a8 8 0 0 1 12-6.93A8 8 0 0 1 28 13c0 7.8-12 15-12 15z" fill="none" stroke="#6c5ce7" stroke-width="1.5"/></svg>
+                  <div style="font-size:8px;color:#a89fd8;font-family:'IBM Plex Mono',monospace;">Soul Support</div>
+                  <div style="width:40px;height:3px;background:rgba(108,92,231,0.5);border-radius:2px;"></div>
+                </div>
+                <div class="ss-s2">
+                  <div style="font-size:7px;color:#888;font-family:'IBM Plex Mono',monospace;margin-bottom:4px;">Today's check-in</div>
+                  <div style="display:flex;gap:4px;margin-bottom:4px;">
+                    <div style="flex:1;height:20px;background:rgba(108,92,231,0.2);border-radius:3px;"></div>
+                    <div style="flex:1;height:20px;background:rgba(232,67,147,0.2);border-radius:3px;"></div>
+                  </div>
+                  <div style="height:10px;background:rgba(255,255,255,0.05);border-radius:2px;margin-bottom:3px;"></div>
+                  <div style="height:10px;width:70%;background:rgba(255,255,255,0.05);border-radius:2px;"></div>
+                </div>
+                <div class="ss-s3">
+                  <div style="font-size:7px;color:#888;font-family:'IBM Plex Mono',monospace;margin-bottom:6px;">AI therapy plan</div>
+                  <div style="width:50px;height:50px;border-radius:50%;border:2px solid rgba(108,92,231,0.5);display:flex;align-items:center;justify-content:center;">
+                    <div style="width:30px;height:30px;border-radius:50%;background:rgba(108,92,231,0.3);"></div>
+                  </div>
+                  <div style="font-size:7px;color:var(--muted);margin-top:4px;">Personalized</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div style="position:absolute;right:20px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:6px;">
+            <div style="font-size:9px;font-family:'IBM Plex Mono',monospace;color:var(--muted);">swipe →</div>
+          </div>
+          <div class="phone-dots" id="ss-dots">
+            <div class="phone-dot active"></div>
+            <div class="phone-dot"></div>
+            <div class="phone-dot"></div>
+          </div>
+          <div class="award-chip">★ Best Grad Project</div>
+        </div>
+        <div class="card-body">
+          <div class="card-role">UI/UX Designer & Team Lead</div>
+          <div class="card-title">Soul Support</div>
+          <div class="card-problem">Problem: Patients struggled to access affordable and personalized mental health support, often relying on generic or disconnected solutions.</div>
+          <div class="process-steps">
+            <div class="pstep"><div class="pstep-dot">1</div><div class="pstep-label">Research</div></div>
+            <div class="pstep-arrow">→</div>
+            <div class="pstep"><div class="pstep-dot">2</div><div class="pstep-label">Wireframe</div></div>
+            <div class="pstep-arrow">→</div>
+            <div class="pstep"><div class="pstep-dot">3</div><div class="pstep-label">Final UI</div></div>
+          </div>
+          <div class="ba-toggle">
+            <button class="ba-btn active" onclick="setView('ss','wire',this)">wireframe</button>
+            <button class="ba-btn" onclick="setView('ss','hifi',this)">final UI</button>
+          </div>
+          <div class="ba-preview" id="ss-preview">
+            <div class="ba-wireframe" id="ss-wire">
+              <div style="display:flex;gap:4px;"><div class="wf-box" style="width:30px;height:18px;"></div><div style="flex:1;"><div class="wf-line" style="width:60%;"></div><div class="wf-line" style="width:40%;margin-top:3px;"></div></div></div>
+              <div class="wf-line" style="width:90%;"></div>
+              <div style="display:flex;gap:3px;"><div class="wf-box" style="flex:1;height:12px;"></div><div class="wf-box" style="flex:1;height:12px;"></div></div>
+            </div>
+            <div class="ba-hifi" id="ss-hifi" style="background:linear-gradient(135deg,#1a0a2e,#2d1b69);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;">
+              <svg width="20" height="20" viewBox="0 0 32 32"><path d="M16 28s-12-7.2-12-15a8 8 0 0 1 12-6.93A8 8 0 0 1 28 13c0 7.8-12 15-12 15z" fill="none" stroke="#6c5ce7" stroke-width="1.5"/></svg>
+              <div style="font-size:9px;color:#a89fd8;font-family:'IBM Plex Mono',monospace;">High-fidelity UI</div>
+              <div style="width:60px;height:3px;background:rgba(108,92,231,0.6);border-radius:2px;"></div>
+            </div>
+          </div>
+          <div class="card-tags"><span class="tag">Figma</span><span class="tag">Flutter</span><span class="tag rose">Emotional Design</span><span class="tag">Firebase</span></div>
+          <div class="card-links">
+            <a href="https://www.behance.net/gallery/229736197/Soul-Support-Mental-Health-Support-App" class="card-link">Behance ↗</a>
+            <a href="https://github.com/Maliikx/soul_support.git" class="card-link">GitHub ↗</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- U MOVE -->
+      <div class="project-card fade-in" style="animation-delay:.1s">
+        <div class="phone-wrap">
+          <div class="phone-frame" id="um-phone">
+            <div class="phone-notch"></div>
+            <div class="phone-screen" id="um-screen">
+              <div class="screen-strip">
+                <div class="um-s1">
+                  <div style="font-size:7px;color:#378add;font-family:'IBM Plex Mono',monospace;margin-bottom:4px;">U Move</div>
+                  <div style="height:40px;background:rgba(55,138,221,0.15);border-radius:4px;border:.5px solid rgba(55,138,221,0.3);position:relative;overflow:hidden;">
+                    <svg width="100%" height="100%" viewBox="0 0 72 40"><path d="M0,35 L15,20 L30,28 L45,12 L60,22 L72,8" fill="none" stroke="#378add" stroke-width="1" opacity=".7"/><circle cx="72" cy="8" r="3" fill="#6c5ce7"/></svg>
+                  </div>
+                  <div style="font-size:7px;color:#888;margin-top:3px;">Alexandria → Cairo</div>
+                </div>
+                <div class="um-s2">
+                  <div style="font-size:7px;color:#888;font-family:'IBM Plex Mono',monospace;margin-bottom:4px;">Select ride</div>
+                  <div style="height:18px;background:rgba(55,138,221,0.2);border-radius:3px;margin-bottom:3px;display:flex;align-items:center;padding:0 4px;"><div style="font-size:7px;color:#378add;">Economy</div></div>
+                  <div style="height:18px;background:rgba(108,92,231,0.1);border-radius:3px;display:flex;align-items:center;padding:0 4px;"><div style="font-size:7px;color:var(--muted);">Comfort</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="phone-dots" id="um-dots">
+            <div class="phone-dot active"></div>
+            <div class="phone-dot"></div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-role">Lead UI/UX Designer</div>
+          <div class="card-title">U Move</div>
+          <div class="card-problem">Problem: Urban commuters faced friction in booking rides with cluttered interfaces.</div>
+          <div class="process-steps">
+            <div class="pstep"><div class="pstep-dot">1</div><div class="pstep-label">Research</div></div>
+            <div class="pstep-arrow">→</div>
+            <div class="pstep"><div class="pstep-dot">2</div><div class="pstep-label">Wireframe</div></div>
+            <div class="pstep-arrow">→</div>
+            <div class="pstep"><div class="pstep-dot">3</div><div class="pstep-label">Final UI</div></div>
+          </div>
+          <div class="ba-toggle">
+            <button class="ba-btn active" onclick="setView('um','wire',this)">wireframe</button>
+            <button class="ba-btn" onclick="setView('um','hifi',this)">final UI</button>
+          </div>
+          <div class="ba-preview" id="um-preview">
+            <div class="ba-wireframe" id="um-wire">
+              <div style="display:flex;gap:4px;margin-bottom:4px;"><div class="wf-box" style="flex:2;height:16px;"></div><div class="wf-box" style="flex:1;height:16px;"></div></div>
+              <div class="wf-line" style="width:80%;"></div>
+              <div class="wf-line" style="width:50%;"></div>
+            </div>
+            <div class="ba-hifi" id="um-hifi" style="background:linear-gradient(135deg,#0a1628,#1a3a5c);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;">
+              <svg width="28" height="14" viewBox="0 0 56 28"><path d="M0,25 L14,10 L28,18 L42,5 L56,12" fill="none" stroke="#378add" stroke-width="1.5"/></svg>
+              <div style="font-size:9px;color:#378add;font-family:'IBM Plex Mono',monospace;">High-fidelity UI</div>
+            </div>
+          </div>
+          <div class="card-tags"><span class="tag">Figma</span><span class="tag rose">User Flows</span><span class="tag">Prototyping</span></div>
+          <div class="card-links">
+            <a href="https://www.behance.net/gallery/229740505/U-Move-Smart-Transportation-App-%28Mobile-UIUX%29" class="card-link">Behance ↗</a>
+            <a href="https://github.com/Abrarayman27/u-move.git" class="card-link">GitHub ↗</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- SILENT ME -->
+      <div class="project-card fade-in" style="animation-delay:.2s">
+        <div class="phone-wrap">
+          <div class="phone-frame" id="sm-phone">
+            <div class="phone-notch"></div>
+            <div class="phone-screen" id="sm-screen">
+              <div class="screen-strip">
+                <div class="sm-s1">
+                  <svg width="28" height="28" viewBox="0 0 32 32"><circle cx="16" cy="16" r="12" fill="none" stroke="#1d9e75" stroke-width="1"/><circle cx="16" cy="16" r="7" fill="rgba(29,158,117,0.15)"/><circle cx="16" cy="16" r="3" fill="rgba(29,158,117,0.4)"/></svg>
+                  <div style="font-size:8px;color:#1d9e75;font-family:'IBM Plex Mono',monospace;">Silent Me</div>
+                  <div style="font-size:7px;color:var(--muted);">breathe</div>
+                </div>
+                <div class="sm-s2">
+                  <div style="font-size:7px;color:#1d9e75;font-family:'IBM Plex Mono',monospace;margin-bottom:4px;">Today's sessions</div>
+                  <div style="height:14px;background:rgba(29,158,117,0.2);border-radius:3px;margin-bottom:3px;"></div>
+                  <div style="height:14px;background:rgba(29,158,117,0.1);border-radius:3px;margin-bottom:3px;"></div>
+                  <div style="height:14px;background:rgba(29,158,117,0.05);border-radius:3px;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="phone-dots" id="sm-dots">
+            <div class="phone-dot active"></div>
+            <div class="phone-dot"></div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-role">UI/UX Designer + Brand Identity</div>
+          <div class="card-title">Silent Me</div>
+          <div class="card-problem">Problem: Meditation apps often feel overwhelming or emotionally disconnected.</div>
+          <div class="process-steps">
+            <div class="pstep"><div class="pstep-dot">1</div><div class="pstep-label">Research</div></div>
+            <div class="pstep-arrow">→</div>
+            <div class="pstep"><div class="pstep-dot">2</div><div class="pstep-label">Branding</div></div>
+            <div class="pstep-arrow">→</div>
+            <div class="pstep"><div class="pstep-dot">3</div><div class="pstep-label">Final UI</div></div>
+          </div>
+          <div class="ba-toggle">
+            <button class="ba-btn active" onclick="setView('sm','wire',this)">wireframe</button>
+            <button class="ba-btn" onclick="setView('sm','hifi',this)">final UI</button>
+          </div>
+          <div class="ba-preview" id="sm-preview">
+            <div class="ba-wireframe" id="sm-wire">
+              <div style="display:flex;justify-content:center;margin-bottom:4px;"><div class="wf-box" style="width:28px;height:28px;border-radius:50%;"></div></div>
+              <div class="wf-line" style="width:60%;margin:0 auto;"></div>
+            </div>
+            <div class="ba-hifi" id="sm-hifi" style="background:linear-gradient(135deg,#051414,#0d3b3b);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;">
+              <svg width="20" height="20" viewBox="0 0 32 32"><circle cx="16" cy="16" r="12" fill="none" stroke="#1d9e75" stroke-width="1.5"/><circle cx="16" cy="16" r="6" fill="rgba(29,158,117,0.3)"/></svg>
+              <div style="font-size:9px;color:#1d9e75;font-family:'IBM Plex Mono',monospace;">High-fidelity UI</div>
+            </div>
+          </div>
+          <div class="card-tags"><span class="tag">Branding</span><span class="tag">Figma</span><span class="tag rose">Visual Identity</span></div>
+          <div class="card-links">
+            <a href="https://www.behance.net/gallery/229744467/Silent-Me-Meditation-Mindfulness-App" class="card-link">Behance ↗</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- SKILLS -->
+  <section id="skills">
+    <div class="section-label">// 02. capabilities</div>
+    <h2 class="section-title">Skills Matrix</h2>
+    <div class="skills-bento">
+      <div class="skill-cell fade-in">
+        <div class="skill-cell-icon">⬡</div>
+        <div class="skill-cell-title">The Blueprint</div>
+        <div class="skill-pills">
+          <span class="skill-pill">Figma<span class="skill-tip">Used in Soul Support, U Move, Silent Me</span></span>
+          <span class="skill-pill">Adobe XD<span class="skill-tip">UI mockups & handoff</span></span>
+          <span class="skill-pill">Wireframing<span class="skill-tip">All 3 projects — see toggles above</span></span>
+          <span class="skill-pill">Prototyping<span class="skill-tip">Interactive prototypes for user testing</span></span>
+          <span class="skill-pill">Design Systems<span class="skill-tip">Component libraries across projects</span></span>
+          <span class="skill-pill">User Flows<span class="skill-tip">U Move ride-booking flow, SS onboarding</span></span>
+        </div>
+      </div>
+      <div class="skill-cell fade-in" style="animation-delay:.1s">
+        <div class="skill-cell-icon">◈</div>
+        <div class="skill-cell-title">The Engine</div>
+        <div class="skill-pills">
+          <span class="skill-pill">Flutter<span class="skill-tip">Soul Support & U Move full dev</span></span>
+          <span class="skill-pill">Dart<span class="skill-tip">Primary language for Flutter apps</span></span>
+          <span class="skill-pill">Firebase<span class="skill-tip">Backend for Soul Support</span></span>
+          <span class="skill-pill">HTML/CSS<span class="skill-tip">Web UI & portfolio</span></span>
+          <span class="skill-pill">JavaScript<span class="skill-tip">Frontend interactivity</span></span>
+          <span class="skill-pill">Python<span class="skill-tip">AI features in Soul Support</span></span>
+        </div>
+      </div>
+      <div class="skill-cell fade-in" style="animation-delay:.2s">
+        <div class="skill-cell-icon">◎</div>
+        <div class="skill-cell-title">The Lens</div>
+        <div class="skill-pills">
+          <span class="skill-pill">User Research<span class="skill-tip">NN/g certified — all projects</span></span>
+          <span class="skill-pill">Usability Testing<span class="skill-tip">Soul Support — iterated 3 rounds</span></span>
+          <span class="skill-pill">NN/g Methods<span class="skill-tip">90+ hrs master certification</span></span>
+          <span class="skill-pill">Accessibility<span class="skill-tip">WCAG guidelines applied</span></span>
+        </div>
+      </div>
+      <div class="skill-cell wide fade-in" style="animation-delay:.3s">
+        <div class="skill-cell-icon">◇</div>
+        <div class="skill-cell-title">The Toolkit</div>
+        <div class="skill-pills">
+          <span class="skill-pill">Git & GitHub<span class="skill-tip">Version control — all repos linked</span></span>
+          <span class="skill-pill">scikit-learn<span class="skill-tip">ML features in Soul Support AI</span></span>
+          <span class="skill-pill">Emotional Design<span class="skill-tip">Core of Soul Support UX strategy</span></span>
+          <span class="skill-pill">Interaction Design<span class="skill-tip">Micro-interactions across all apps</span></span>
+          <span class="skill-pill">Responsive Design<span class="skill-tip">U Move mobile-first layouts</span></span>
+          <span class="skill-pill">Cross-team Collab<span class="skill-tip">Led team of 5 on Soul Support</span></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- EXPERIENCE -->
+  <section id="experience">
+    <div class="section-label">// 03. journey</div>
+    <h2 class="section-title">Experience & Education</h2>
+    <div class="timeline">
+      <div class="tl-item fade-in">
+        <div class="tl-dot"></div>
+        <div class="tl-date">July 2025 – Present</div>
+        <div class="tl-role">Coding Instructor</div>
+        <div class="tl-org">iSchool — Cairo, Egypt (Remote)</div>
+        <div class="tl-desc">Teaching frontend and mobile development with a focus on simplifying complex concepts into engaging, easy-to-understand lessons.
+Helping students build real projects and develop problem-solving skills.</div>
+      </div>
+      <div class="tl-item fade-in">
+        <div class="tl-dot rose"></div>
+        <div class="tl-date">March 2022 – Present</div>
+        <div class="tl-role">Freelance UI/UX Designer</div>
+        <div class="tl-org">Self-Employed — Remote & Project-Based</div>
+        <div class="tl-desc">Designing user-centered interfaces for mobile and web applications, from research to high-fidelity prototypes.
+Continuously improving designs based on usability testing and user feedback.</div>
+      </div>
+      <div class="tl-item fade-in">
+        <div class="tl-dot"></div>
+        <div class="tl-date">2021 – 2025</div>
+        <div class="tl-role">B.Sc. Computer Science & Software Engineering</div>
+        <div class="tl-org">Alexandria University — CGPA: 3.0 / Very Good</div>
+        <div class="tl-desc">Graduation project: Soul Support — awarded Best Graduation Project across all departments. Grade: Excellent.</div>
+      </div>
+    </div>
+    <div style="margin-top:2.5rem;">
+      <div class="section-label" style="margin-bottom:.75rem;">// certifications</div>
+      <div class="certs-row">
+        <div class="cert-card fade-in"><div class="cert-icon">🏅</div><div class="cert-name">UX Master Certification</div><div class="cert-issuer">Nielsen Norman Group — 90+ hrs — 2025</div></div>
+        <div class="cert-card fade-in"><div class="cert-icon">📐</div><div class="cert-name">UI/UX Diploma</div><div class="cert-issuer">Route IT Training Center — 2025</div></div>
+        <div class="cert-card fade-in"><div class="cert-icon">🔍</div><div class="cert-name">Google UX Design</div><div class="cert-issuer">Coursera — 2025</div></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <section id="contact">
+    <div class="section-label">// 04. let's connect</div>
+    <h2 class="section-title">Contact</h2>
+    <div class="contact-grid">
+      <div class="contact-item fade-in"><div class="contact-icon">✉</div><div><div class="contact-label">email</div><div class="contact-value">abrarayman81@gmail.com</div></div></div>
+      <div class="contact-item fade-in"><div class="contact-icon">☎</div><div><div class="contact-label">phone</div><div class="contact-value">01287372168</div></div></div>
+      <div class="contact-item fade-in"><div class="contact-icon">◈</div><div><div class="contact-label">linkedin</div><a href="https://linkedin.com/in/abrarayman" style="color:var(--indigo);font-size:13px;text-decoration:none;">Abrar Ayman ↗</a></div></div>
+      <div class="contact-item fade-in"><div class="contact-icon">⬡</div><div><div class="contact-label">location</div><div class="contact-value">Alexandria, Egypt — open to relocate</div></div></div>
+    </div>
+  </section>
+
+  <footer>Designed by <span>Abrar Ayman</span> — 2025<br><span style="color:var(--indigo)">"Designing experiences that feel effortless, yet are deeply intentional."</span></footer>
+</div>
+
+<script>
+function goTo(id){const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth',block:'start'});}
+
+const dot=document.getElementById('cdot');
+const ring=document.getElementById('cring');
+let mx=0,my=0,rx=0,ry=0;
+document.getElementById('port').addEventListener('mousemove',e=>{
+  const r=document.getElementById('port').getBoundingClientRect();
+  mx=e.clientX-r.left; my=e.clientY-r.top;
+  dot.style.left=mx+'px'; dot.style.top=my+'px';
+});
+function animRing(){
+  rx+=(mx-rx)*0.12; ry+=(my-ry)*0.12;
+  ring.style.left=Math.round(rx)+'px'; ring.style.top=Math.round(ry)+'px';
+  requestAnimationFrame(animRing);
+}
+animRing();
+
+const phrases=['I bridge emotion and digital logic.','I design for real human needs.','I turn complexity into clarity.','I build experiences, not interfaces.'];
+let pi=0,ci=0,del=false;
+const tw=document.getElementById('tw');
+function type(){
+  const ph=phrases[pi];
+  if(!del){tw.textContent=ph.slice(0,ci+1);ci++;if(ci===ph.length){del=true;setTimeout(type,2000);return;}}
+  else{tw.textContent=ph.slice(0,ci-1);ci--;if(ci===0){del=false;pi=(pi+1)%phrases.length;}}
+  setTimeout(type,del?40:80);
+}
+type();
+
+function setView(id,view,btn){
+  const wire=document.getElementById(id+'-wire');
+  const hifi=document.getElementById(id+'-hifi');
+  const btns=btn.parentElement.querySelectorAll('.ba-btn');
+  btns.forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  if(view==='wire'){wire.style.opacity='1';hifi.style.opacity='0';}
+  else{wire.style.opacity='0';hifi.style.opacity='1';}
+}
+
+function animPhone(screenId,dotsId,screens,interval){
+  let cur=0;
+  const screen=document.getElementById(screenId);
+  if(!screen)return;
+  const strip=screen.querySelector('.screen-strip');
+  const dotsEl=document.getElementById(dotsId);
+  if(!strip||!dotsEl)return;
+  const dots=dotsEl.querySelectorAll('.phone-dot');
+  setInterval(()=>{
+    cur=(cur+1)%screens;
+    strip.style.transform=`translateY(-${cur*130}px)`;
+    dots.forEach((d,i)=>{d.classList.toggle('active',i===cur);});
+  },interval);
+}
+animPhone('ss-screen','ss-dots',3,2000);
+animPhone('um-screen','um-dots',2,2500);
+animPhone('sm-screen','sm-dots',2,2200);
+
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});
+},{threshold:0.1});
+document.querySelectorAll('.fade-in').forEach(el=>obs.observe(el));
+</script>
